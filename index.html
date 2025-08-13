@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Escolha de filmes</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="title">
+        <h1>Bem-vindos</h1>
+      </div>
+      <div class="teste">
+        <div class="otherone"></div>
+        <div class="form">
+          <h3>Cadastrar filme</h3>
+          <form id="movieForm">
+            <label>Filme</label>
+            <input type="text" placeholder="nome do filme" id="movieName" />
+
+            <label>Sugestão</label>
+            <select id="sugestion">
+              <option>Escolha um...</option>
+              <option value="kaio">kaio</option>
+              <option value="henrique">henrique</option>
+            </select>
+
+            <label>Src</label>
+            <input type="text" placeholder="src.." id="image" />
+            <div class="button">
+              <button type="submit">Salvar</button>
+            </div>
+          </form>
+        </div>
+        <div class="random">
+          <h1>Aletorizar Filme</h1>
+
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/2619/2619273.png"
+            class="randomButton"
+            onclick="random()"
+          />
+          <div class="randomizedMovie" id="randomizedMovie"></div>
+        </div>
+      </div>
+      <h1>Filmes</h1>
+      <div class="movies" id="movies"></div>
+    </div>
+
+    <script>
+      let movies = JSON.parse(localStorage.getItem("movies")) || [];
+
+      showMovies();
+      document
+        .getElementById("movieForm")
+        .addEventListener("submit", (event) => {
+          event.preventDefault();
+
+          const movie = document.getElementById("movieName").value;
+          const sugestion = document.getElementById("sugestion").value;
+          const image = document.getElementById("image").value;
+
+          if (movie) {
+            const newMovie = {
+              filme: movie,
+              sugestao: sugestion,
+              imagem: image,
+            };
+            movies.push(newMovie);
+            localStorage.setItem("movies", JSON.stringify(movies));
+            showMovies();
+            document.getElementById("movieForm").reset();
+          } else {
+            alert("Insira um filme");
+          }
+        });
+
+      function showMovies() {
+        const showMovies = document.getElementById("movies");
+        showMovies.innerHTML = "";
+        const localMovies = JSON.parse(localStorage.getItem("movies")) || [];
+        localMovies.forEach((movie, index) => {
+          const movieHTML = `<div class="content">
+            <div class="functionButtons">
+              <img onclick='remove(${index})' src="https://cdn-icons-png.flaticon.com/512/860/860829.png"/>
+              <p class='index'>${index + 1}</p>
+            </div>
+                    <img src=${movie.imagem} alt="Pôster do filme ${
+            movie.filme
+          }"/>
+                    <h3>${movie.filme}</h3>
+                    <p>${movie.sugestao}</p>
+                    </div>
+      `;
+          showMovies.innerHTML += movieHTML;
+        });
+      }
+
+      function random() {
+        const ramdomMovie = Math.floor(Math.random() * movies.length);
+        const randomizedMovie = document.getElementById("randomizedMovie");
+        const showMovie = movies[ramdomMovie];
+
+        if (showMovie) {
+          randomizedMovie.innerHTML = `
+           <div class="content">
+                    <img src=${showMovie.imagem} alt="Pôster do filme ${showMovie.filme}"/>
+                    <h3>${showMovie.filme}</h3>
+                    <p>${showMovie.sugestao}</p>
+                    </div>
+            `;
+        } else {
+          alert("Insira um filme");
+        }
+      }
+
+      function remove(index) {
+        const moviesRemoved = JSON.parse(localStorage.getItem("movies"));
+        moviesRemoved.splice(index, 1);
+
+        localStorage.setItem("movies", JSON.stringify(moviesRemoved));
+        console.log(index);
+        showMovies();
+      }
+    </script>
+  </body>
+</html>
